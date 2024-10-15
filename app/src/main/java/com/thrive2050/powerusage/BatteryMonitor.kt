@@ -1,4 +1,4 @@
-package com.example.powerusage
+package com.thrive2050.powerusage
 
 import android.app.Service
 import android.content.Intent

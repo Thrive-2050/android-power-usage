@@ -1,6 +1,5 @@
-package com.example.powerusage.ui.theme
+package com.thrive2050.powerusage.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

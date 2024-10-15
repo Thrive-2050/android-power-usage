@@ -1,4 +1,4 @@
-package com.example.powerusage
+package com.thrive2050.powerusage
 
 import org.junit.Test
 

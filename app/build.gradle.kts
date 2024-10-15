@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.powerusage"
+    namespace = "com.thrive2050.powerusage"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.powerusage"
+        applicationId = "com.thrive2050.powerusage"
         minSdk = 33
         targetSdk = 34
         versionCode = 1

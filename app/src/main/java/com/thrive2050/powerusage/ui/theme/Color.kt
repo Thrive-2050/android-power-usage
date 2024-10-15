@@ -1,4 +1,4 @@
-package com.example.powerusage.ui.theme
+package com.thrive2050.powerusage.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

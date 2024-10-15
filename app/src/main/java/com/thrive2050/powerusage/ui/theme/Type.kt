@@ -1,4 +1,4 @@
-package com.example.powerusage.ui.theme
+package com.thrive2050.powerusage.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
