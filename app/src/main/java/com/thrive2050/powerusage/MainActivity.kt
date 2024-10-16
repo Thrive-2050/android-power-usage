@@ -34,7 +34,6 @@ import kotlin.math.abs
 class MainActivity : ComponentActivity() {
     private var energyConsumption by mutableDoubleStateOf(0.0)
     private var initialBatteryLevel: Int = -1
-    private var batteryCapacity: Double = -1.0
     private var voltage: Double = -1.0
     private var startTime: Long = -1
 
@@ -78,7 +77,6 @@ class MainActivity : ComponentActivity() {
             if (initialBatteryLevel == -1) {
                 initialBatteryLevel = level
                 startTime = System.currentTimeMillis()
-                batteryCapacity = getBatteryCapacity(this).toDouble()
                 voltage = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1).toDouble()
             } else {
                 val timeNow = System.currentTimeMillis()
@@ -92,11 +90,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         return energyInWattHours
-    }
-
-    private fun getBatteryCapacity(context: Context): Long {
-        val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-        return batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
     }
 
     private fun getCurrentNow(context: Context): Int {
