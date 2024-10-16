@@ -11,12 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PowerUsage">
-        <service
-            android:name="com.thrive2050.powerusage.BatteryStatsService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="TODO"
-            />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
