@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "com.thrive2050.powerusage"
-        minSdk = 33
-        targetSdk = 34
+        minSdk = 21
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
