@@ -1,0 +1,11 @@
+sequenceDiagram
+    User->>App: Input the URL
+    User->>App: Press start button
+    App-->>Server: Request video
+    loop continuous
+        Server-->>App: Stream video
+        App-->>App: Record stats
+
+    end
+    User->>App: Press stop button
+    App-->>Server: Send stats
