@@ -19,4 +19,5 @@ package com.thrive2050.powerusage
 
 object Constants {
     const val GIST_URL = "https://gist.githubusercontent.com/jjmax75/ce6d8a1adec3ad454aa09e33b4207897/raw/9930426784ad5e29103aba25ded9b148c9f1d424/video-url"
+    const val POLLING_INTERVAL_MS = 1000L
 }
