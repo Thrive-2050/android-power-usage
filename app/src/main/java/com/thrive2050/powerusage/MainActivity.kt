@@ -17,16 +17,23 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.thrive2050.powerusage.data.PowerUsageRepositoryImpl
 import com.thrive2050.powerusage.domain.GetEnergyConsumptionUseCase
@@ -39,9 +46,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: PowerUsageViewModel by viewModels {
         PowerUsageViewModelFactory(GetEnergyConsumptionUseCase(PowerUsageRepositoryImpl(this)))
     }
-
-    private val videoUrl = Uri.parse("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4")
-//    private val videoUrl = Uri.parse("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4")
+    private val gistUrlFetcher = GistUrlFetcher()
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +57,28 @@ class MainActivity : ComponentActivity() {
             PowerUsageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     val energyConsumption by viewModel.energyConsumption.collectAsState()
-                    MainScreen(energyConsumption.energyInWattHours, videoUrl)
+                    var videoUrl by remember { mutableStateOf<Uri?>(null) }
+                    var isLoading by remember { mutableStateOf(true) }
+                    var loadFailed by remember { mutableStateOf(false) }
+
+                    LaunchedEffect(key1 = Unit) {
+                        val fetchedUrl = gistUrlFetcher.getUrlFromGist(Constants.GIST_URL)
+                        if (fetchedUrl != null) {
+                            videoUrl = fetchedUrl
+                            isLoading = false
+                        } else {
+                            loadFailed = true
+                            isLoading = false
+                        }
+                    }
+
+                    if (loadFailed) {
+                        CenteredMessage("Failed to load video")
+                    } else if (isLoading) {
+                        CenteredMessage("Loading video...")
+                    } else if (videoUrl != null) {
+                        MainScreen(energyConsumption.energyInWattHours, videoUrl!!)
+                    }
                 }
             }
         }
@@ -97,6 +123,22 @@ fun CurrentDisplay(energyConsumption: Double, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = "Energy Consumption:\r\n$formattedWh Wh",
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+fun CenteredMessage(message: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
             textAlign = TextAlign.Center,
             color = Color.White
         )
