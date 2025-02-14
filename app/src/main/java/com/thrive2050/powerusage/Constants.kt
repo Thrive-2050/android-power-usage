@@ -15,14 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 */
 
-package com.thrive2050.powerusage.data
+package com.thrive2050.powerusage
 
-data class BatteryStats(
-    val level: Int,
-    val voltage: Double,
-    val currentNow: Int
-)
-
-data class EnergyConsumption(
-    val energyInWattHours: Double
-)
+object Constants {
+    const val GIST_URL = "https://gist.githubusercontent.com/jjmax75/ce6d8a1adec3ad454aa09e33b4207897/raw/9930426784ad5e29103aba25ded9b148c9f1d424/video-url"
+}
