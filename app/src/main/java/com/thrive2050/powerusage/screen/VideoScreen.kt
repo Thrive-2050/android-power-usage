@@ -39,15 +39,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import java.text.DecimalFormat
 
 @Composable
-fun MainScreen(energyConsumption: Double, videoUrl: Uri) {
+fun MainScreen(energyConsumption: Double, videoUrl: Uri, onVideoEnded: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
-        VideoPlayerScreen(videoUrl)
+        VideoPlayerScreen(videoUrl, onVideoEnded)
         CurrentDisplay(energyConsumption, Modifier.align(Alignment.TopStart))
     }
 }
 
 @Composable
-fun VideoPlayerScreen(videoUrl: Uri) {
+fun VideoPlayerScreen(videoUrl: Uri, onVideoEnded: () -> Unit) {
     AndroidView(
         factory = { context ->
             VideoView(context).apply {
@@ -56,6 +56,10 @@ fun VideoPlayerScreen(videoUrl: Uri) {
                 setOnErrorListener { mp, what, extra ->
                     Log.e("VideoView", "Error: what=$what, extra=$extra")
                     true // Return true to indicate that you've handled the error
+                }
+                setOnCompletionListener {
+                    Log.d("VideoView", "Video completed")
+                    onVideoEnded()
                 }
                 start()
             }

@@ -36,6 +36,7 @@ import com.thrive2050.powerusage.data.PowerUsageRepositoryImpl
 import com.thrive2050.powerusage.domain.GetEnergyConsumptionUseCase
 import com.thrive2050.powerusage.presentation.PowerUsageViewModel
 import com.thrive2050.powerusage.presentation.PowerUsageViewModelFactory
+import com.thrive2050.powerusage.screen.EndScreen
 import com.thrive2050.powerusage.screen.MainScreen
 import com.thrive2050.powerusage.screen.StartScreenContent
 import com.thrive2050.powerusage.ui.theme.PowerUsageTheme
@@ -56,10 +57,13 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     val energyConsumption by viewModel.energyConsumption.collectAsState()
                     var videoUrl by remember { mutableStateOf<Uri?>(null) }
-                    var isStartingVideo by remember { mutableStateOf(false) }
+                    var videoPlaying by remember { mutableStateOf(false) }
+                    var videoEnded by remember { mutableStateOf(false) }
 
-                    if (isStartingVideo) {
-                        MainScreen(energyConsumption.energyInWattHours, videoUrl!!)
+                    if (videoPlaying) {
+                        MainScreen(energyConsumption.energyInWattHours, videoUrl!!, onVideoEnded = { videoPlaying = false; videoEnded = true })
+                    } else if (videoEnded) {
+                        EndScreen()
                     } else {
                         StartScreenContent(
                             gistUrlFetcher = gistUrlFetcher,
@@ -67,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 videoUrl = url
                             },
                             onStartVideoClicked = {
-                                isStartingVideo = true
+                                videoPlaying = true
                             }
                         )
                     }
