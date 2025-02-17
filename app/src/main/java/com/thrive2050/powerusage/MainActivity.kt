@@ -61,9 +61,21 @@ class MainActivity : ComponentActivity() {
                     var videoEnded by remember { mutableStateOf(false) }
 
                     if (videoPlaying) {
-                        MainScreen(energyConsumption.energyInWattHours, videoUrl!!, onVideoEnded = { videoPlaying = false; videoEnded = true })
+                        MainScreen(
+                            energyConsumption.energyInWattHours,
+                            videoUrl!!,
+                            onVideoEnded = {
+                                videoPlaying = false;
+                                videoEnded = true
+                            }
+                        )
                     } else if (videoEnded) {
-                        EndScreen()
+                        EndScreen(
+                            onResetClicked = {
+                                videoEnded = false;
+                                videoUrl = null
+                            }
+                        )
                     } else {
                         StartScreenContent(
                             gistUrlFetcher = gistUrlFetcher,
