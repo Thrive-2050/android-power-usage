@@ -42,7 +42,7 @@ class GistUrlFetcher {
                 connection.disconnect()
 
                 if (videoUrlString != null && videoUrlString.isNotBlank()) {
-                    Log.d("GetURLFromGist", "Video URL from Gist: $videoUrlString")
+                    Log.d("GistUrlFetcher", "Video URL from Gist: $videoUrlString")
                     Uri.parse(videoUrlString)
                 } else {
                     Log.e("GistUrlFetcher", "Invalid or empty video URL in Gist")
