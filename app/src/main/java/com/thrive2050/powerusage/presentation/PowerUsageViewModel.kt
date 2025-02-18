@@ -73,6 +73,7 @@ class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyCons
                 _energyConsumption.update { currentList ->
                     (currentList + powerStatEntry)
                 }
+
             }
         }.launchIn(viewModelScope)
     }
