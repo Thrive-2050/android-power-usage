@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyConsumptionUseCase) : ViewModel() {
     private val _energyConsumption = MutableStateFlow<List<PowerStatEntry>>(emptyList())
     val energyConsumption: StateFlow<List<PowerStatEntry>> = _energyConsumption.asStateFlow()
