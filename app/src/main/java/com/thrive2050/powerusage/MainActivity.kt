@@ -43,7 +43,13 @@ import com.thrive2050.powerusage.ui.theme.PowerUsageTheme
 
 class MainActivity : ComponentActivity() {
     private val viewModel: PowerUsageViewModel by viewModels {
-        PowerUsageViewModelFactory(GetEnergyConsumptionUseCase(PowerUsageRepositoryImpl(this)))
+        PowerUsageViewModelFactory(
+            GetEnergyConsumptionUseCase(
+                PowerUsageRepositoryImpl(
+                    this
+                )
+            )
+        )
     }
     private val gistUrlFetcher = GistUrlFetcher()
 
@@ -62,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
                     if (videoPlaying) {
                         MainScreen(
-                            energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0,
+                            energyConsumption,
                             videoUrl!!,
                             onVideoEnded = {
                                 videoPlaying = false
@@ -75,7 +81,8 @@ class MainActivity : ComponentActivity() {
                             onResetClicked = {
                                 videoEnded = false
                                 videoUrl = null
-                            }
+                            },
+                            powerStats = energyConsumption
                         )
                     } else {
                         StartScreenContent(
