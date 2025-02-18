@@ -27,10 +27,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 
 class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyConsumptionUseCase) : ViewModel() {
-    private val _energyConsumption = MutableStateFlow(EnergyConsumption(0.0))
-    val energyConsumption: StateFlow<EnergyConsumption> = _energyConsumption.asStateFlow()
+    private val _energyConsumption = MutableStateFlow<List<EnergyConsumption>>(emptyList())
+    val energyConsumption: StateFlow<List<EnergyConsumption>> = _energyConsumption.asStateFlow()
 
     init {
         Log.d("PowerUsageVM", "ViewModel initialized")
@@ -41,7 +42,9 @@ class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyCons
         Log.d("PowerUsageVM", "getEnergyConsumption() called")
         getEnergyConsumptionUseCase().onEach { energyConsumption ->
             Log.d("PowerUsageVM", "Energy Consumption updated: ${energyConsumption.energyInWattHours}")
-            _energyConsumption.value = energyConsumption
+            _energyConsumption.update { currentList ->
+                (currentList + energyConsumption).takeLast(10) // TODO: change to retain all values
+            }
         }.launchIn(viewModelScope)
     }
 }

@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
                     if (videoPlaying) {
                         MainScreen(
-                            energyConsumption.energyInWattHours,
+                            energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0,
                             videoUrl!!,
                             onVideoEnded = {
                                 videoPlaying = false;
