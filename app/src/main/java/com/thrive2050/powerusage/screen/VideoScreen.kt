@@ -39,11 +39,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.thrive2050.powerusage.data.PowerStatEntry
 import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 
 @Composable
-fun MainScreen(energyConsumption: Double, videoUrl: Uri, onVideoEnded: () -> Unit) {
+fun MainScreen(
+    energyConsumption: List<PowerStatEntry>,
+    videoUrl: Uri,
+    onVideoEnded: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         VideoPlayerScreen(videoUrl, onVideoEnded)
         CurrentDisplay(energyConsumption, Modifier.align(Alignment.TopStart))
@@ -88,9 +93,14 @@ fun VideoPlayerScreen(videoUrl: Uri, onVideoEnded: () -> Unit) {
 }
 
 @Composable
-fun CurrentDisplay(energyConsumption: Double, modifier: Modifier = Modifier) {
+fun CurrentDisplay(
+    energyConsumption: List<PowerStatEntry>,
+    modifier: Modifier = Modifier
+) {
     val decimalFormat = DecimalFormat("#.###")
-    val formattedWh = decimalFormat.format(energyConsumption)
+    val formattedWh = decimalFormat.format(
+        energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0
+    )
     Column(
         modifier = modifier
             .background(Color.Black.copy(alpha = 0.5f))

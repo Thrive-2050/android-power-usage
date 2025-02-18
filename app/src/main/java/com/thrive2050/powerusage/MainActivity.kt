@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
                     if (videoPlaying) {
                         MainScreen(
-                            energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0,
+                            energyConsumption,
                             videoUrl!!,
                             onVideoEnded = {
                                 videoPlaying = false
@@ -75,7 +75,8 @@ class MainActivity : ComponentActivity() {
                             onResetClicked = {
                                 videoEnded = false
                                 videoUrl = null
-                            }
+                            },
+                            powerStats = energyConsumption
                         )
                     } else {
                         StartScreenContent(
