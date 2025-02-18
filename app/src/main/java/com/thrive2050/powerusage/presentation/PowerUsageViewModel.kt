@@ -51,6 +51,8 @@ class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyCons
         isCollecting = false
         collectingJob?.cancel()
         collectingJob = null
+        Log.d("PowerUsageVM", "Collecting stopped")
+        Log.d("PowerUsageVM", "Energy Consumption: ${_energyConsumption.value}")
     }
 
     private fun getEnergyConsumption(): Job {
