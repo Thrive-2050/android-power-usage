@@ -65,14 +65,15 @@ class MainActivity : ComponentActivity() {
                             energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0,
                             videoUrl!!,
                             onVideoEnded = {
-                                videoPlaying = false;
+                                videoPlaying = false
                                 videoEnded = true
+                                viewModel.stopCollecting()
                             }
                         )
                     } else if (videoEnded) {
                         EndScreen(
                             onResetClicked = {
-                                videoEnded = false;
+                                videoEnded = false
                                 videoUrl = null
                             }
                         )
@@ -84,6 +85,7 @@ class MainActivity : ComponentActivity() {
                             },
                             onStartVideoClicked = {
                                 videoPlaying = true
+                                viewModel.startCollecting()
                             }
                         )
                     }
