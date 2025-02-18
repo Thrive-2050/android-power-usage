@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thrive2050.powerusage.data.EnergyConsumption
 import com.thrive2050.powerusage.domain.GetEnergyConsumptionUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,15 +33,29 @@ import kotlinx.coroutines.flow.update
 class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyConsumptionUseCase) : ViewModel() {
     private val _energyConsumption = MutableStateFlow<List<EnergyConsumption>>(emptyList())
     val energyConsumption: StateFlow<List<EnergyConsumption>> = _energyConsumption.asStateFlow()
+    private var collectingJob: Job? = null
+    private var isCollecting = false
 
     init {
         Log.d("PowerUsageVM", "ViewModel initialized")
-        getEnergyConsumption()
     }
 
-    private fun getEnergyConsumption() {
+    fun startCollecting() {
+        Log.d("PowerUsageVM", "startCollecting() called")
+        isCollecting = true
+        collectingJob = getEnergyConsumption()
+    }
+
+    fun stopCollecting() {
+        Log.d("PowerUsageVM", "stopCollecting() called")
+        isCollecting = false
+        collectingJob?.cancel()
+        collectingJob = null
+    }
+
+    private fun getEnergyConsumption(): Job {
         Log.d("PowerUsageVM", "getEnergyConsumption() called")
-        getEnergyConsumptionUseCase().onEach { energyConsumption ->
+        return getEnergyConsumptionUseCase().onEach { energyConsumption ->
             Log.d("PowerUsageVM", "Energy Consumption updated: ${energyConsumption.energyInWattHours}")
             _energyConsumption.update { currentList ->
                 (currentList + energyConsumption).takeLast(10) // TODO: change to retain all values
