@@ -30,16 +30,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.thrive2050.powerusage.data.PowerStatEntry
+import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 
 @Composable
-fun MainScreen(energyConsumption: Double, videoUrl: Uri, onVideoEnded: () -> Unit) {
+fun MainScreen(
+    energyConsumption: List<PowerStatEntry>,
+    videoUrl: Uri,
+    onVideoEnded: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         VideoPlayerScreen(videoUrl, onVideoEnded)
         CurrentDisplay(energyConsumption, Modifier.align(Alignment.TopStart))
@@ -48,30 +57,50 @@ fun MainScreen(energyConsumption: Double, videoUrl: Uri, onVideoEnded: () -> Uni
 
 @Composable
 fun VideoPlayerScreen(videoUrl: Uri, onVideoEnded: () -> Unit) {
-    AndroidView(
-        factory = { context ->
-            VideoView(context).apply {
-                Log.d("VideoView", "Video URL: $videoUrl")
-                setVideoURI(videoUrl)
-                setOnErrorListener { mp, what, extra ->
-                    Log.e("VideoView", "Error: what=$what, extra=$extra")
-                    true // Return true to indicate that you've handled the error
-                }
-                setOnCompletionListener {
-                    Log.d("VideoView", "Video completed")
-                    onVideoEnded()
-                }
-                start()
+    val context = LocalContext.current
+    val videoView = remember {
+        VideoView(context).apply {
+            Log.d("VideoView", "Video URL: $videoUrl")
+            setVideoURI(videoUrl)
+            setOnErrorListener { mp, what, extra ->
+                Log.e("VideoView", "Error: what=$what, extra=$extra")
+                true // Return true to indicate that you've handled the error
             }
+            setOnCompletionListener {
+                Log.d("VideoView", "Video completed")
+                onVideoEnded()
+            }
+            setOnInfoListener { mp, what, extra ->
+                Log.d("VideoView", "Info: what=$what, extra=$extra")
+                true
+            }
+        }
+    }
+
+    AndroidView(
+        factory = {
+            videoView
         },
         modifier = Modifier.fillMaxSize()
     )
+
+    LaunchedEffect(key1 = Unit) {
+        Log.d("VideoView", "Starting video playback but waiting 3 seconds")
+        delay(3000)
+        Log.d("VideoView", "Video playback started after 3 seconds")
+        videoView.start()
+    }
 }
 
 @Composable
-fun CurrentDisplay(energyConsumption: Double, modifier: Modifier = Modifier) {
+fun CurrentDisplay(
+    energyConsumption: List<PowerStatEntry>,
+    modifier: Modifier = Modifier
+) {
     val decimalFormat = DecimalFormat("#.###")
-    val formattedWh = decimalFormat.format(energyConsumption)
+    val formattedWh = decimalFormat.format(
+        energyConsumption.lastOrNull()?.energyInWattHours ?: 0.0
+    )
     Column(
         modifier = modifier
             .background(Color.Black.copy(alpha = 0.5f))

@@ -20,7 +20,7 @@ package com.thrive2050.powerusage.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thrive2050.powerusage.data.EnergyConsumption
+import com.thrive2050.powerusage.data.PowerStatEntry
 import com.thrive2050.powerusage.domain.GetEnergyConsumptionUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,10 +29,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyConsumptionUseCase) : ViewModel() {
-    private val _energyConsumption = MutableStateFlow<List<EnergyConsumption>>(emptyList())
-    val energyConsumption: StateFlow<List<EnergyConsumption>> = _energyConsumption.asStateFlow()
+    private val _energyConsumption = MutableStateFlow<List<PowerStatEntry>>(emptyList())
+    val energyConsumption: StateFlow<List<PowerStatEntry>> = _energyConsumption.asStateFlow()
     private var collectingJob: Job? = null
     private var isCollecting = false
 
@@ -42,6 +45,7 @@ class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyCons
 
     fun startCollecting() {
         Log.d("PowerUsageVM", "startCollecting() called")
+        _energyConsumption.update { emptyList() }
         isCollecting = true
         collectingJob = getEnergyConsumption()
     }
@@ -57,11 +61,25 @@ class PowerUsageViewModel(private val getEnergyConsumptionUseCase: GetEnergyCons
 
     private fun getEnergyConsumption(): Job {
         Log.d("PowerUsageVM", "getEnergyConsumption() called")
-        return getEnergyConsumptionUseCase().onEach { energyConsumption ->
-            Log.d("PowerUsageVM", "Energy Consumption updated: ${energyConsumption.energyInWattHours}")
-            _energyConsumption.update { currentList ->
-                (currentList + energyConsumption).takeLast(10) // TODO: change to retain all values
+        return getEnergyConsumptionUseCase().onEach { batteryUsage ->
+            if (isCollecting) {
+                val timestamp = formatTimestamp(System.currentTimeMillis())
+                val powerStatEntry = PowerStatEntry(timestamp, batteryUsage.energyInWattHours)
+                Log.d(
+                    "PowerUsageVM",
+                    "Energy Consumption updated: ${powerStatEntry.energyInWattHours}"
+                )
+                _energyConsumption.update { currentList ->
+                    (currentList + powerStatEntry)
+                }
+
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun formatTimestamp(timestamp: Long): String {
+        val date = Date(timestamp)
+        val formatter = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(date)
     }
 }
