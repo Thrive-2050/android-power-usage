@@ -1,6 +1,9 @@
 # android-power-usage
 Check the power usage of an android app
 
+## Status
+POC
+
 ## Reference
 - https://developer.android.com/reference/android/os/BatteryManager
 - https://developermemos.com/posts/get-android-battery-level-batterymanager
